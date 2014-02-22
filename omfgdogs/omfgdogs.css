@@ -1,0 +1,43 @@
+
+
+
+a {
+       position: absolute;
+       bottom: 0;
+       right: 0;
+       font-color: #FFA500;
+       font-size: 48px;
+       display: inline;
+}
+
+body {
+       background-image: url('omfgdogs.gif');
+       background-repeat: repeat;
+}
+
+
+p {
+font-size: 36px;
+font-family: Verdana;
+}
+
+
+
+<style>
+@media (max-width: 922px) {
+
+       img {
+       	  display: none;
+       }
+       a {
+       	  display: none;
+	  }
+}
+
+@media (min-width: 922px){
+       p {
+       	 display: none;
+	 }
+}
+
+</style>
