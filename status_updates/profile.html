@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+<title>Fecesbook</title>
+<script>
+  
+function printMsg() {  
+  var updateTime = new Date();
+  var month = updateTime.getMonth() + 1;
+  var day = updateTime.getDay();
+  var year = updateTime.getFullYear();
+  var hours = updateTime.getHours();
+  var minutes = updateTime.getMinutes();
+
+
+  var status_text = (month + "/" + day + "/" + year + " "
+    + hours + ":" + minutes + " - " 
+    + document.getElementById("msg").value);
+
+  // creates a new paragraph element
+  var para = document.createElement("p");
+
+  para.innerText = status_text;
+
+  var status = document.getElementById("status");
+  status.insertBefore(para, status.firstChild)
+
+ /*
+  THIS APPENDS THE TEXT INSTEAD OF PREPENDING IT. IGNORE!
+  // append the text node to the paragraph element
+  para.insertBefore(node);
+  // append the new element to an existing element
+  var element = document.getElementById("status");
+  element.prependChild(para);
+  */
+}
+
+</script>
+
+</head>
+
+<body>
+  <h1>Fecebook</h1>
+  <div id="nav">
+    <ul>
+      <li id="home">Home</li>
+      <li id="groups">Groups</li>
+      <li id="profile">Profile</li>
+      <li id="contacts">Contacts</li>
+      <li id="inbox">Inbox</li>
+      <li id="applications">Applications</li>
+      </ul>
+    </div>
+  <h2 id="fullname">Barney Gumble</h2>
+  <h3>What are you thinking about? 
+    <!--trying to make a form-->
+      <input type = "text" id ="msg" name="msg" size="30" onchange="printMsg()"/>
+  
+
+<!-- CODE FOR A BUTTON
+   <input type="submit" value ="Submit" onchange="printMsg()"/> -->
+
+
+
+<!-- original code    <input type="text" id="msg" name="msg" size="30"/></h3> -->
+
+
+  <h3>Updates</h3>
+  <div id="status">
+    </div>
+  <div id="yesterday">
+    <h3>Updates from yesterday:</h3>
+    <ul>
+      <li>Alice is now connected to Bob</li>
+      <li>Tom recommends Jerry</li>
+      <li>Harry just returned from a trip from Curaco</li>
+      </ul>
+    </div>
+  <div id="longlongtimeago">
+    <h3>Updates from long long time ago:</h3>
+    <ul>
+      <li>Harry just returned from a trip from Curaco</li>
+      <li>Joan is now connected to Mary</li>
+      <li>Steven is now connected to James</li>
+      </ul>
+    </div>
+</body>
+</html>
+
+
+
