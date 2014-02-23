@@ -6,9 +6,16 @@
 <link rel="stylesheet" href="style.css">
 <script src="game.js"></script>
 </head>
-<body>
+
+<body onload="drawPic()">
 <div id="game_div">
-<canvas id="game" height="600" width="800"></canvas>
+<canvas id="game" height="600" width="800">
+	This text is displayed if your browser doesn't support Canvas
+</canvas>
+
+<img src="duckhunt.png" id="assets" alt="duckhunt graphics"> </img>
+
+
 </div>
 </body>
 </html>
