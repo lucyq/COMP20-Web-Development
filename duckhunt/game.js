@@ -1,8 +1,6 @@
-// Your work goes here...
+function draw() {
+// TO DO: Check if browser is supported
 
-
-
-function drawPic() {
 	var c = document.getElementById("game");
 	var ctx = c.getContext("2d");
 
@@ -44,8 +42,8 @@ function drawPic() {
 	var blue_5 = document.getElementById("assets");
 	ctx.drawImage(blue_5, 37, 118, 35, 30, 700, 0, 85, 80);
 
-}
 
+}
 
 
 
