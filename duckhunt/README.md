@@ -22,5 +22,6 @@ duckhunt.png
 -later used by the "game.js" file to draw objects
 
 Notes:
+-All aspects of the work have been correctly implemented to my knowledge
 -Did not collaborate with anyone
 -Hours spent: 2.5
