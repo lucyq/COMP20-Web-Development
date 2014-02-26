@@ -1,8 +1,18 @@
 function draw() {
-// TO DO: Check if browser is supported
 
 	var c = document.getElementById("game");
 	var ctx = c.getContext("2d");
+
+	// check if browser is supported
+	if (!(document.getElementById("game"))) {
+		// browser is not supported
+		console.log("Your browser does not support 'canvas'")
+		return;
+	}
+
+	//
+	// - - - DRAWING OBJECTS - - - -
+	//
 
 	// javascript syntax: 
 	// drawImage(img_name, sx, sy, sw, sh, x, y, w, h)
@@ -16,7 +26,7 @@ function draw() {
 	var floor=document.getElementById("assets");
 	ctx.drawImage(floor, 400, 720, 500, 185, 0, 320, 800, 340);
 
-	// GRAPHICS THAT NEED TO BE ANIMATED
+	// GRAPHICS THAT WILL NEED TO BE ANIMATED
 	// sniffing dog
 	var sniffing_dog = document.getElementById("assets");
 	ctx.drawImage(sniffing_dog, 0, 5, 60, 47, 5, 470, 180, 125);
@@ -44,44 +54,3 @@ function draw() {
 
 
 }
-
-
-
-/*
-var sky = document.getElementById("game_div");
-var ctx = sky.getContext("2d");
-ctx.fillStyle = "#87CEEB";
-ctx.fillRect = (0, 0, 150, 75);
-
-var dirt = document.getElementById("game_div");
-var ctx = sky.getContext("2d");
-ctx.fillStyle = "C96A1B";
-*/
-
-
-
-/* LEARNING HOW TO DRAW THINGS
-function draw() {
-	var canvas = document.getElementById("game");
-	var context = canvas.getContext ("2d");
-
-	context.fillStyle = "rgb(200, 0, 0)";
-	context.fillRect(10, 10, 55, 50);
-}
-
-
-function drawTree() {
-	var canvas = document.getElementById("game");
-	var context = canvas.getContext ("2d");
-
-
-// drawing a tree
-context.beginPath();
-context.arc(100,75,50,0,2*Math.PI);
-context.stroke();
-
-}
-
-draw();
-drawTree();
-*/
