@@ -1,0 +1,16 @@
+p {
+	font-size: 20px;
+	font-family: Verdana;
+	margin: 20px;
+	text-align: center;
+}
+
+div {
+	position: center;
+	width: 400px;
+	height: auto;
+	margin: auto;
+	padding: 0;
+	border-style: solid;
+	border-color: #0099FF;
+}
