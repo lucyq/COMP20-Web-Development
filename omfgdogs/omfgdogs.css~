@@ -1,0 +1,33 @@
+img {
+width: 100%;
+}
+
+a {
+font-size: 48px;
+font-color: red;
+}
+
+p {
+font-size: 36px;
+font-family: Verdana;
+}
+
+
+<style>
+@media (max-width: 922px) {
+
+       img {
+       	  display: none;
+       }
+       a {
+       	  display: none;
+	  }
+}
+
+@media (min-width: 922px){
+       p {
+       	 display: none;
+	 }
+}
+
+</style>
