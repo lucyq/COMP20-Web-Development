@@ -76,7 +76,7 @@ var redLine = [{"id": 0, "Name": "Alewife", "Lat": 42.395428, "Lng": -71.142483}
 
 
 //
-// - - - DECLARING VARIABLES USED FOR MAP
+// - - - GLOBAL VARIABLES
 //
 
 var me; // user
@@ -86,6 +86,8 @@ var map; // the map
 var marker; // user's marker
 var infowindow = new google.maps.InfoWindow();
 var data; // data from parsing the schedule
+var foundStation;
+var foundSeconds;
 
 
 //
@@ -103,6 +105,7 @@ var mapOptions = {
 // purpose: create a new map within "map_canvas"
 function initialize() {
 	map = new google.maps.Map(document.getElementById('map_canvas'), mapOptions);
+	
 	getLocation();
 
 	var request = new XMLHttpRequest();
@@ -110,10 +113,11 @@ function initialize() {
 	request.send();
 	request.onreadystatechange = function() {
 		if (request.readyState==4 && request.status==200) {
-			data = JSON.parse(request.responseText);
-			createMarkers();
+			data = JSON.parse(request.responseText);	
 		}
 	};
+
+
 }
 
 
@@ -123,7 +127,9 @@ function getLocation() {
 		navigator.geolocation.getCurrentPosition(function(position) {
 			myLat = position.coords.latitude;
 			myLng = position.coords.longitude;
+			manageLines();
 			renderMap();
+		
 		});
 	} else {
 		alert("Geolocation is not supported by your browser. So sad!");
@@ -143,20 +149,27 @@ function renderMap() {
 	marker = new google.maps.Marker({
 		position: me,
 		icon: image,
-		map: map,
-		title: "HI, YOU FOUND ME!"
+		map: map
 	});
+
+	var meDiv = document.createElement("div");
+	meDiv.id = "meDiv";
+	meDiv.innerHTML = foundStation;
+
 
 	// open an info window on click of marker
 	google.maps.event.addListener(marker, 'click', function() {
-		infowindow.setContent(marker.title);
+		infowindow.setContent(meDiv);
 		infowindow.open(map, marker);
 	});
 
 }
 
+//
+// - - - SETTING UP MARKERS
+//
 
-function createMarkers() {
+function manageLines() {
 	var line = data["line"];
 	var length;
 
@@ -165,34 +178,74 @@ function createMarkers() {
 		icon = 'blue.png';
 		color = '#0000FF';
 		genMarkers(length, blueLine, icon, color);
+		manageDistances(length, blueLine);
 	}
 	if (line == "orange") {
 		length = orangeLine.length;
 		icon = "orange.png";
 		color = "#FFA500";
 		genMarkers(length, orangeLine, icon, color);
+		manageDistances(length, orangeLine);
 	} 
 	if (line == "red") {
 		length = redLine.length;
 		icon = "red.png";
 		color = '#FF0000';
 		genMarkers(length, redLine, icon, color);
+		manageDistances(length, redLine);
 	}
 }
 
 
 function genMarkers(length, colorLine, icon, color){
-	var stationArray = new Array();
+	var stationArray = new Array(); // stores station locations
+
+	// creating stations locations & markers
 	for (var i = 0; i < length; i++) {
 		station = new google.maps.LatLng(colorLine[i]["Lat"], colorLine[i]["Lng"]);
 		stationArray[i] = station;
 		
+		// create markers
 		var stationMark = new google.maps.Marker({
 			position: station,
 			icon: icon,
-			map: map
-		});
+			map: map,
+			title: colorLine[i]["Name"]
+		}); 
+		// CREATE TABLE
+		createTable(colorLine[i]["Name"]);
+		var stationWindow = new google.maps.InfoWindow();
+		var chart = document.createElement("table");
+		var chartbody = document.createElement("tbody");
+
+		for (var j = 0; j < chart.length; j++) {
+			var row = document.createElement("tr");
+			var cell = document.createElement("td");
+			var cellText = document.createTextNode(foundSeconds[j]);
+			cell.appendChild(cellText);
+			row.appendChild(cell);
+	
+			console.log(foundSeconds[j]);
+		}
+	//	chartbody.appendChild(row);
+		chart.appendChild(chartbody);
+		chart.setAttribute("border", "2");
+		// add table to InfoWindow
+		var infoDiv = document.createElement("div");
+		infoDiv.id = "infoDiv";
+		infoDiv.innerHTML = colorLine[i]["Name"];
+		infoDiv.appendChild(chart);
+		// create the actual infowindows
+		google.maps.event.addListener(stationMark, 'click', (function(infoDiv, i) {
+			return function() {
+				stationWindow.setContent(infoDiv);
+				stationWindow.open(map, this);
+			}
+		})(infoDiv, i));
 	}
+	
+	
+	// Create polylines
 	var flightPath = new google.maps.Polyline({
 		path: stationArray,
 		geodesic: true,
@@ -204,30 +257,72 @@ function genMarkers(length, colorLine, icon, color){
 
 }
 
+// CREATE A TABLE
+function createTable(findStop) {
+	var endPoint;
+	var stops;
+// Go through each train destination (endPoint)
+	for (var i = 0; i < data["schedule"].length; i++) {
+		endPoint = data["schedule"][i]["Predictions"];
+	}
 
+	for (var j = 0; j < endPoint.length; j++) {
+	var	s = endPoint[j]["Stop"];
+		if (s == findStop) {
+			var foundSeconds = endPoint[j]["Seconds"];
+		}
+	}
+}
+//
+// - - - FINDING DISTANCES
+//
 
+// Called from manageLines
+// Figures out the shortest distance and returns the closest station
+// adds meMarker
+function manageDistances(length, colorLine) {
+	var distances = new Array();
 
+	var i = 0;
+	var j = 0;
+	var a = new Array();
 
+	distances[i] = findDistance(myLat, colorLine[i]["Lat"], 
+									myLng, colorLine[i]["Lng"]);
 
+	for (i = 1; i < length; i++) {
+		distances[i] = findDistance(myLat, colorLine[i]["Lat"], 
+									myLng, colorLine[i]["Lng"]);
+		if (distances[i] <= distances[i-1]) {
+			a[j] = i;
+			j++;
+		}
+	}
+	var index = a[j-2];
 
-
-			
-		/*	// open an info window on click of marker
-			google.maps.event.addListener(redMarker, 'click', function() {
-			infowindow.setContent(redMarker.title);
-			infowindow.open(map, redMarker);
-			});
-		*/
-
-/*
-
-function drawLine() {
-	var c = document.getElementById("myCanvas");
-	var ctx = c.getContext("2d");
-	ctx.fillStyle = "#FF0000";
-	ctx.fillRect(0,0,150,75);
+	foundStation = "Closest T Station: " + colorLine[index]["Name"];
+	console.log(colorLine[index]["Name"]);
 }
 
+function findDistance (lat1, lat2, lon1, lon2) {
+
+var R = 6371; // km
+var dLat = toRad(lat2-lat1);
+var dLon = toRad(lon2-lon1);
+var lat1 = toRad(lat1);
+var lat2 = toRad(lat2);
+
+var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+        Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(lat1) * Math.cos(lat2); 
+var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+var d = R * c;
+
+return d;
+}
+
+function toRad(x) {
+   return x * Math.PI / 180;
+}
 
 
 
@@ -240,18 +335,10 @@ function drawLine() {
 
 // NOTE: make sure you fix the error from JSON parsing.
 
-
-content 
-
+/*
 
 
 
-
-
-//
-// CODE FROM CLASS
-// 
-data = JSON.parse (responseText);
 
 // to print out a line:
 // console.log(data.line);
@@ -278,16 +365,6 @@ for (i = 0; i < data["schedule"].length; i++) {
 
 
 
-
-
-
- NOTES
-google.maps.Map - The map object (duh!)
-google.maps.LatLng - An object that contains the latitude and longitude pair
-google.maps.Marker - A marker
-google.maps.InfoWindow - An info window
-google.maps.Polyline - A linear overlay
-google.maps.event - An event listener for Google Maps
 
 
 */
