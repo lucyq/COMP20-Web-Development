@@ -1,7 +1,6 @@
 //
 // - - - BLUE LINE LOCATIONS
 //
-
 var blueLine = [{"id": 0, "Name": "Wonderland" , "Lat": 42.41342, "Lng": -70.991648},
 				{"id": 1, "Name": "Revere Beach", "Lat": 42.40784254,"Lng": -70.99253321},
 				{"id": 2, "Name": "Beachmont", "Lat": 42.39754234, "Lng": -70.99231944},
@@ -15,11 +14,9 @@ var blueLine = [{"id": 0, "Name": "Wonderland" , "Lat": 42.41342, "Lng": -70.991
 				{"id": 10, "Name": "Government Center", "Lat": 42.359705, "Lng": -71.059215},
 				{"id": 11, "Name": "Bowdoin", "Lat": 42.361365 , "Lng": -71.062037}];
 
-
 //
 // - - - ORANGE LINE LOCATIONS
 //
-
 var orangeLine = [{"id": 0, "Name": "Oak Grove", "Lat":42.43668 , "Lng": -71.071097 },
 				{"id": 1, "Name": "Malden Center", "Lat": 42.426632, "Lng": -71.07411},
 				{"id": 2, "Name": "Wellington", "Lat": 42.40237 , "Lng": -71.077082},
@@ -39,14 +36,10 @@ var orangeLine = [{"id": 0, "Name": "Oak Grove", "Lat":42.43668 , "Lng": -71.071
 				{"id": 16, "Name": "Stony Brook", "Lat":42.317062, "Lng": -71.104248},
 				{"id": 17, "Name": "Green Street", "Lat": 42.310525, "Lng": -71.107414},			
 				{"id": 18, "Name": "Forest Hills", "Lat": 42.300523, "Lng": -71.113686}];
-			
-
-
 
 //
 // - - - RED LINE LOCATIONS
 //
-
 var redLine = [{"id": 0, "Name": "Alewife", "Lat": 42.395428, "Lng": -71.142483},
 			{"id": 1, "Name": "Davis", "Lat": 42.39674, "Lng": -71.121815},
 			{"id": 2, "Name": "Porter Square", "Lat": 42.3884, "Lng": -71.119149}, 
@@ -72,27 +65,27 @@ var redLine = [{"id": 0, "Name": "Alewife", "Lat": 42.395428, "Lng": -71.142483}
 			{"id": 20, "Name": "Shawmut", "Lat": 42.29312583, "Lng": -71.06573796},
 			{"id": 21, "Name": "Ashmont", "Lat": 42.284652, "Lng":-71.064489}]
 
-
-
-
 //
 // - - - GLOBAL VARIABLES
 //
+// basics
+var map; // the map
+var data; // data from parsing the schedule
 
-var me; // user
+// user
+var me; 
 var myLat = 0; // user's latitude
 var myLng = 0; // user's longitude
-var map; // the map
 var marker; // user's marker
-var infowindow = new google.maps.InfoWindow();
-var data; // data from parsing the schedule
-var foundStation;
+var infowindow = new google.maps.InfoWindow(); // user's infowindow
+
+// variables modified by helper functions
+var stationArray = new Array(); // stores station locations, used for polylines
+var foundStation; // stores closest station to user
 var foundSeconds = new Array();
-var NOTFOUND = -1000;
 var endPoint = new Array(); // destinations
 var predictions = new Array(); // predictions for each destination
-var tableArray = new Array();
-var stationArray = new Array(); // stores station locations
+var tableArray = new Array(); // table storing schedule info
 
 //
 // - - - INITIALIZING MAP
@@ -106,7 +99,7 @@ var mapOptions = {
 	};
 
 
-// purpose: create a new map within "map_canvas"
+// Purpose: sets up the map. also checks the status and parses information
 function initialize() {
 	map = new google.maps.Map(document.getElementById('map_canvas'), mapOptions);
 
@@ -124,7 +117,8 @@ function initialize() {
 }
 
 
-// use geolocation to get your GPS coordinates
+// Purpose: use geolocation to get user's GPS coordinates. calls functions
+//			create various markers
 function getLocation() {
 	if (navigator.geolocation) {
 		navigator.geolocation.getCurrentPosition(function(position) {
@@ -140,7 +134,7 @@ function getLocation() {
 
 }
 
-// loading the actual map
+// Purpose: creates marker with user's coordinates
 function renderMap() {
 	// create map
 	me = new google.maps.LatLng(myLat, myLng);
@@ -169,10 +163,11 @@ function renderMap() {
 }
 
 //
-// - - - SETTING UP MARKERS
+// - - - SETTING UP STATION MARKERS
 //
 
-// checks the line and then calls functions to generate markers and calculate distances
+// Purpose: checks the line and then calls functions to 
+//			generate markers and calculate distances
 function manageLines() {
 	var line = data["line"];
 	var length;
@@ -200,7 +195,7 @@ function manageLines() {
 	}
 }
 
-// Creates the individual markers depending on the line
+// Purpose: Creates the individual markers depending on the line
 function genMarkers(length, colorLine, icon, color){
 	var list;
 	var listItem;
@@ -245,8 +240,8 @@ function genMarkers(length, colorLine, icon, color){
 	}
 	createPolylines(color);
 }
-// Create polylines
-// Manages red line
+// Argument: variable for the color of the line
+// Purpose: Create polylines depending on line
 function createPolylines(color) {
 	var line = data["line"];
 	if (line == "red") {
@@ -292,7 +287,8 @@ function createPolylines(color) {
 
 }
 
-// CREATE A TABLE
+// Purpose: searches the data for relevant information. Finds 
+//			direction and times
 function findInfo(findStop) {
 
 	var count = 0;
@@ -320,9 +316,9 @@ function findInfo(findStop) {
 // - - - FINDING DISTANCES
 //
 
-// Called from manageLines
-// Figures out the shortest distance and returns the closest station
-// adds meMarker
+
+// Purpose: manages finding shortest distance between user and station
+//			converts kilometers to miles
 function manageDistances(length, colorLine) {
 	var distances = new Array();
 
@@ -347,7 +343,9 @@ function manageDistances(length, colorLine) {
 	foundStation = "Closest T Station: " + colorLine[index]["Name"] + 
 					". It is approximately " + convertedD + " miles away from you";
 }
-// find the shortest distance between you and station
+// Argument: user's latitude, station's latitude, user's long, station's long
+// Purpose: finds the shortest distance between you and station
+// Returns: the distance
 function findDistance (lat1, lat2, lon1, lon2) {
 	var R = 6371; // km
 	var dLat = toRad(lat2-lat1);
@@ -362,7 +360,7 @@ function findDistance (lat1, lat2, lon1, lon2) {
 
 	return d;
 }
-// convert to radians
+// Purpose: convert to radians
 function toRad(x) {
    return x * Math.PI / 180;
 }

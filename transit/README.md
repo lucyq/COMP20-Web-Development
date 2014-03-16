@@ -7,11 +7,11 @@
 -Displays user's location on map with a black marker and an infowindow displaying
 the closest T-station
 -The page successfully passed the markup validation
--Upon clicking on the station, the name is displayed along with the desintaion's direction.
+-Upon clicking on the station, the name is displayed along with the desintaion's direction in a list
 -Styling is handled by the style.css file
 -jQuery was not used.
 
 
 
 -Did not collaborate with anyone but asked TA's for help
--Approximate time spent: 30 hours
+-Approximate time spent: 40 hours
