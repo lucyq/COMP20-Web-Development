@@ -87,8 +87,12 @@ var marker; // user's marker
 var infowindow = new google.maps.InfoWindow();
 var data; // data from parsing the schedule
 var foundStation;
-var foundSeconds;
-
+var foundSeconds = new Array();
+var NOTFOUND = -1000;
+var endPoint = new Array(); // destinations
+var predictions = new Array(); // predictions for each destination
+var tableArray = new Array();
+var stationArray = new Array(); // stores station locations
 
 //
 // - - - INITIALIZING MAP
@@ -105,14 +109,13 @@ var mapOptions = {
 // purpose: create a new map within "map_canvas"
 function initialize() {
 	map = new google.maps.Map(document.getElementById('map_canvas'), mapOptions);
-	
-	getLocation();
 
 	var request = new XMLHttpRequest();
 	request.open("GET", "http://mbtamap.herokuapp.com/mapper/rodeo.json", true);
 	request.send();
 	request.onreadystatechange = function() {
 		if (request.readyState==4 && request.status==200) {
+			getLocation();
 			data = JSON.parse(request.responseText);	
 		}
 	};
@@ -169,6 +172,7 @@ function renderMap() {
 // - - - SETTING UP MARKERS
 //
 
+// checks the line and then calls functions to generate markers and calculate distances
 function manageLines() {
 	var line = data["line"];
 	var length;
@@ -196,9 +200,10 @@ function manageLines() {
 	}
 }
 
-
+// Creates the individual markers depending on the line
 function genMarkers(length, colorLine, icon, color){
-	var stationArray = new Array(); // stores station locations
+	var list;
+	var listItem;
 
 	// creating stations locations & markers
 	for (var i = 0; i < length; i++) {
@@ -213,28 +218,25 @@ function genMarkers(length, colorLine, icon, color){
 			title: colorLine[i]["Name"]
 		}); 
 		// CREATE TABLE
-		createTable(colorLine[i]["Name"]);
-		var stationWindow = new google.maps.InfoWindow();
-		var chart = document.createElement("table");
-		var chartbody = document.createElement("tbody");
+		findInfo(colorLine[i]["Name"]);
 
-		for (var j = 0; j < chart.length; j++) {
-			var row = document.createElement("tr");
-			var cell = document.createElement("td");
-			var cellText = document.createTextNode(foundSeconds[j]);
-			cell.appendChild(cellText);
-			row.appendChild(cell);
-	
-			console.log(foundSeconds[j]);
-		}
-	//	chartbody.appendChild(row);
-		chart.appendChild(chartbody);
-		chart.setAttribute("border", "2");
-		// add table to InfoWindow
+		var stationWindow = new google.maps.InfoWindow();
+
 		var infoDiv = document.createElement("div");
 		infoDiv.id = "infoDiv";
 		infoDiv.innerHTML = colorLine[i]["Name"];
-		infoDiv.appendChild(chart);
+
+		for (var j = 0; j < data["schedule"].length; j++) {
+
+				list = document.createElement("ul");
+				list.innerHTML = "Direction: " + endPoint[j];
+				listItem = document.createElement("li");
+				listItem.innerHTML = "Arriving in: " + foundSeconds[j] + " seconds";
+				list.appendChild(listItem);
+				infoDiv.appendChild(list); 
+		}
+		
+
 		// create the actual infowindows
 		google.maps.event.addListener(stationMark, 'click', (function(infoDiv, i) {
 			return function() {
@@ -243,36 +245,81 @@ function genMarkers(length, colorLine, icon, color){
 			}
 		})(infoDiv, i));
 	}
-	
-	
-	// Create polylines
-	var flightPath = new google.maps.Polyline({
+	createPolylines(color);
+}
+// Create polylines
+// Manages red line
+function createPolylines(color) {
+	var line = data["line"];
+	if (line == "red") {
+		red1 = new Array();
+		red2 = new Array();
+
+		red2[0] = stationArray[12];
+		var j = 18;
+		for (var i = 1; i < 5; i++) {
+			red2[i] = stationArray[j];
+			j++;
+		}
+		for (var k = 0; k < 18; k++) {
+			red1[k] = stationArray[k];
+		}
+
+		var redPath1 = new google.maps.Polyline({
+		path: red1,
+		geodesic: true,
+		strokeColor: color,
+		strokeOpacity: 1.0,
+		strokeWeight: 6,
+		map: map
+		});
+		var redPath2 = new google.maps.Polyline({
+		path: red2,
+		geodesic: true,
+		strokeColor: color,
+		strokeOpacity: 1.0,
+		strokeWeight: 6,
+		map: map
+		});
+	} else {
+		var flightPath = new google.maps.Polyline({
 		path: stationArray,
 		geodesic: true,
 		strokeColor: color,
 		strokeOpacity: 1.0,
 		strokeWeight: 6,
 		map: map
-	});
+		});
+	}
 
 }
 
 // CREATE A TABLE
-function createTable(findStop) {
-	var endPoint;
-	var stops;
-// Go through each train destination (endPoint)
-	for (var i = 0; i < data["schedule"].length; i++) {
-		endPoint = data["schedule"][i]["Predictions"];
-	}
+function findInfo(findStop) {
 
-	for (var j = 0; j < endPoint.length; j++) {
-	var	s = endPoint[j]["Stop"];
-		if (s == findStop) {
-			var foundSeconds = endPoint[j]["Seconds"];
+	var count = 0;
+	for (var j = 0; j < data["schedule"].length; j++) {
+		endPoint[j] = data["schedule"][j]["Destination"]
+		predictions[j] = data["schedule"][j]["Predictions"];
+
+//	console.log(predictions[j]);
+
+		for (var k = 1; k < predictions[j].length; k++) {
+			var s = predictions[j][k]["Stop"];
+			if (s == findStop) {
+				foundSeconds = data["schedule"][j]["Predictions"][k]["Seconds"];
+				tableArray[count] = {"Direction":data["schedule"][j]["Destination"], 
+									 "Seconds": foundSeconds};
+				count++;
+				// NOTE: do I need to check if it's undefined & > 0?
+			}
 		}
+		console.log("Table: " + tableArray[0]);
 	}
 }
+
+
+
 //
 // - - - FINDING DISTANCES
 //
@@ -286,6 +333,7 @@ function manageDistances(length, colorLine) {
 	var i = 0;
 	var j = 0;
 	var a = new Array();
+	var convertedD;
 
 	distances[i] = findDistance(myLat, colorLine[i]["Lat"], 
 									myLng, colorLine[i]["Lng"]);
@@ -299,74 +347,32 @@ function manageDistances(length, colorLine) {
 		}
 	}
 	var index = a[j-2];
-
-	foundStation = "Closest T Station: " + colorLine[index]["Name"];
-	console.log(colorLine[index]["Name"]);
+	convertedD = convertMiles(distances[index]);
+	foundStation = "Closest T Station: " + colorLine[index]["Name"] + 
+					". It is approximately " + convertedD + " miles away from you";
 }
-
+// find the shortest distance between you and station
 function findDistance (lat1, lat2, lon1, lon2) {
+	var R = 6371; // km
+	var dLat = toRad(lat2-lat1);
+	var dLon = toRad(lon2-lon1);
+	var lat1 = toRad(lat1);
+	var lat2 = toRad(lat2);
 
-var R = 6371; // km
-var dLat = toRad(lat2-lat1);
-var dLon = toRad(lon2-lon1);
-var lat1 = toRad(lat1);
-var lat2 = toRad(lat2);
+	var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+    	    Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(lat1) * Math.cos(lat2); 
+	var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+	var d = R * c;
 
-var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-        Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(lat1) * Math.cos(lat2); 
-var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
-var d = R * c;
-
-return d;
+	return d;
 }
-
+// convert to radians
 function toRad(x) {
    return x * Math.PI / 180;
 }
 
-
-
-
-// DISPLAY INFO ON TRAINS COMING INTO STATION. 
-//WHen you click on a marker, you only want the trains coming 
-// and going into the station
-
-// view-source:mbtamap.herokuapp.com
-
-// NOTE: make sure you fix the error from JSON parsing.
-
-/*
-
-
-
-
-// to print out a line:
-// console.log(data.line);
-
-//  Demo
-stop_of_interest = "Davis";
-
-
-// Step 1: go through each train destination
-for (i = 0; i < data["schedule"].length; i++) {
-	destination = data["schedule"][i];
-
-	// step 2: get list of stops 
-	stops = destination["Predictions"];
-	for (j = 0; j < stops.length; j++) {
-		s = stops[j];
-		if (s == stop_of_interest) {
-			console.log(s["Seconds"]);
-			console.log(destination["Destination"]);
-		}
-	}
+// convert km to miles
+function convertMiles(distance) {
+	distance = distance * 0.621371;
+	return distance;
 }
-
-
-
-
-
-
-*/
-
-
