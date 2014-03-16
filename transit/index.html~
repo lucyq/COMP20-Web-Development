@@ -1,0 +1,26 @@
+<!DOCTYPE HTML>
+<html>
+
+
+<head>
+  <meta charset="UTF-8">
+  <link type="text/css" rel="stylesheet" href="stylesheet.css"/>
+  <title>Lucy Qin</title>
+</head>
+
+
+<body>
+  <h1>Lucy Qin</h1>
+  <div>
+    <p id="p-center"><a href="resume.html">Resume</a> | <a href="bio.html">
+Bio</a>
+    </p>
+  </div>
+  <p>
+    <img src ="pic.png" alt="Lucy Qin's face">
+  </p>
+
+
+</body>
+
+</html>

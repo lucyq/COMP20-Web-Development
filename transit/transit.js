@@ -303,10 +303,12 @@ function findInfo(findStop) {
 			var s = predictions[j][k]["Stop"];
 			if (s == findStop) {
 				foundSeconds = predictions[j][k]["Seconds"];
+			/*	minSecs = Math.floor(foundSeconds/60);
+				foundSeconds = foundSeconds % 60;     
+				*/       
 				tableArray[count] = {"Direction": endPoint[j], 
 									 "Seconds": foundSeconds};
 				count++;
-				// NOTE: do I need to check if it's undefined & > 0?
 			}
 		}
 	}
