@@ -214,36 +214,34 @@ function genMarkers(length, colorLine, icon, color){
 		var stationMark = new google.maps.Marker({
 			position: station,
 			icon: icon,
-			map: map,
-			title: colorLine[i]["Name"]
+			map: map
 		}); 
 		// CREATE TABLE
 		findInfo(colorLine[i]["Name"]);
 
 		var stationWindow = new google.maps.InfoWindow();
 
-		var infoDiv = document.createElement("div");
-		infoDiv.id = "infoDiv";
-		infoDiv.innerHTML = colorLine[i]["Name"];
+		var infoList = document.createElement("ul");
+		infoList.id = "infoDiv";
+		infoList.innerHTML = colorLine[i]["Name"];
 
-		for (var j = 0; j < data["schedule"].length; j++) {
-
-				list = document.createElement("ul");
-				list.innerHTML = "Direction: " + endPoint[j];
-				listItem = document.createElement("li");
-				listItem.innerHTML = "Arriving in: " + foundSeconds[j] + " seconds";
-				list.appendChild(listItem);
-				infoDiv.appendChild(list); 
+		for (var j = 0; j < tableArray.length; j++) {
+			list = document.createElement("ul");
+			list.innerHTML = "Direction: " + tableArray[j]["Direction"];
+			listItem = document.createElement("li");
+			listItem.innerHTML = "Arriving in: " + tableArray[j]["Seconds"] + " seconds";
+			list.appendChild(listItem);
+			infoList.appendChild(list); 
 		}
 		
 
 		// create the actual infowindows
-		google.maps.event.addListener(stationMark, 'click', (function(infoDiv, i) {
+		google.maps.event.addListener(stationMark, 'click', (function(infoList, i) {
 			return function() {
-				stationWindow.setContent(infoDiv);
+				stationWindow.setContent(infoList);
 				stationWindow.open(map, this);
 			}
-		})(infoDiv, i));
+		})(infoList, i));
 	}
 	createPolylines(color);
 }
@@ -301,20 +299,16 @@ function findInfo(findStop) {
 	for (var j = 0; j < data["schedule"].length; j++) {
 		endPoint[j] = data["schedule"][j]["Destination"]
 		predictions[j] = data["schedule"][j]["Predictions"];
-
-//	console.log(predictions[j]);
-
 		for (var k = 1; k < predictions[j].length; k++) {
 			var s = predictions[j][k]["Stop"];
 			if (s == findStop) {
-				foundSeconds = data["schedule"][j]["Predictions"][k]["Seconds"];
-				tableArray[count] = {"Direction":data["schedule"][j]["Destination"], 
+				foundSeconds = predictions[j][k]["Seconds"];
+				tableArray[count] = {"Direction": endPoint[j], 
 									 "Seconds": foundSeconds};
 				count++;
 				// NOTE: do I need to check if it's undefined & > 0?
 			}
 		}
-		console.log("Table: " + tableArray[0]);
 	}
 }
 
