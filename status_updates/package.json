@@ -16,5 +16,8 @@
     "update"
   ],
   "author": "lucy-qin",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "express": "^3.5.1"
+  }
 }
