@@ -50,10 +50,10 @@ function formatTime() {
   var year = updateTime.getUTCFullYear();
   var hours = updateTime.getUTCHours();
   var minutes = updateTime.getUTCMinutes();
-  var seconds = updateTime.getUTCSeconds();
+  
 
   var currTime = (month + "/" + day + "/" + year + " "
-    + hours + ":" + minutes + ":" + seconds + " - ");
+    + hours + ":" + minutes + " - ");
   return currTime;
 
 }

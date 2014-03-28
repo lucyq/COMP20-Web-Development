@@ -11,4 +11,3 @@ Uses local storage to store previous updates
 
 Heroku url: 
 http://fecebook.herokuapp.com/
-
