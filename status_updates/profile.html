@@ -5,43 +5,81 @@
 <head>
 <title>Fecesbook</title>
 <script>
-  
-function printMsg() {  
+
+//
+// GLOBAL VARIABLE
+//
+var count = 0;
+
+function init() {
+  if (!supports_storage()) {return false; }
+  loadStoredMsg();
+}
+
+// checks to see if local storage is supported by browser
+function supports_storage() {
+  try {
+    return 'localStorage' in window && window['localStorage'] !== null;
+  } catch (e) {
+    return false;
+  }
+}
+
+function loadStoredMsg() {
+  var values = new Array();
+
+  for (var i = 0; i < localStorage.length; i++) {
+    var itemKey = localStorage.key(i);
+    values[i]= localStorage.getItem(itemKey);
+
+    var messages = document.createElement("p");
+    messages.innerText = values[i];
+
+    var display = document.getElementById("status");
+    display.appendChild(messages);
+ 
+  }
+}
+ 
+
+function formatTime() {
+
   var updateTime = new Date();
-  var month = updateTime.getMonth() + 1;
-  var day = updateTime.getDay();
-  var year = updateTime.getFullYear();
-  var hours = updateTime.getHours();
-  var minutes = updateTime.getMinutes();
+  var month = updateTime.getUTCMonth() + 1;
+  var day = updateTime.getUTCDate();
+  var year = updateTime.getUTCFullYear();
+  var hours = updateTime.getUTCHours();
+  var minutes = updateTime.getUTCMinutes();
+  var seconds = updateTime.getUTCSeconds();
 
+  var currTime = (month + "/" + day + "/" + year + " "
+    + hours + ":" + minutes + ":" + seconds + " - ");
+  return currTime;
 
-  var status_text = (month + "/" + day + "/" + year + " "
-    + hours + ":" + minutes + " - " 
-    + document.getElementById("msg").value);
+}
+
+function printMsg() {  
+
+  var status_text = (formatTime() + document.getElementById("msg").value);
 
   // creates a new paragraph element
   var para = document.createElement("p");
-
   para.innerText = status_text;
 
   var status = document.getElementById("status");
-  status.insertBefore(para, status.firstChild)
+  status.insertBefore(para, status.firstChild);
 
- /*
-  THIS APPENDS THE TEXT INSTEAD OF PREPENDING IT. IGNORE!
-  // append the text node to the paragraph element
-  para.insertBefore(node);
-  // append the new element to an existing element
-  var element = document.getElementById("status");
-  element.prependChild(para);
-  */
+
+
+  localStorage[count] = status_text;
+  count++;
+  
 }
 
 </script>
 
 </head>
-
-<body>
+<body onload="init()">
   <h1>Fecebook</h1>
   <div id="nav">
     <ul>
