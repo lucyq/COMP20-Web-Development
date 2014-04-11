@@ -1,0 +1,21 @@
+April 1 - Databases and Persistent Data Storage
+
+
+// create new database:
+use comp20
+show collections;
+db.roster.insert({"first_name": "Max", "last_name": "Cohen", "yog": Sophomore})
+db.roster.insert({"first_name": "Lisa", "last_name": "Fan", "yog": Sophomore, "Major: CS"})
+
+-can't do relations on different collections
+-can add different types of info --- as evidenced by "Major"
+-how to update different information? 
+	db.roster.update()
+
+
+db.roster.find({"yog":"Freshman"}) would return nothing since there aren't any..
+db.roster.find({"yog":"Sophomore"}) --> full record of all people
+
+-can query by anything
+
+

@@ -1,0 +1,49 @@
+In client side JS, you can't make a direct connection to a database
+
+A.) 2048 the Game
+	-do not need to submit A
+B.) Your web application
+	-The game center
+	-Server side
+	-Reads POST request data
+	-Parses POST request data & stores in database
+	-We don't care about where B is b/c we're using cross origin sharing
+	-Also processes GET requests to GET the data rom the databse and renders it
+
+C.) Database (Mongo)
+	-Don't forget to turn onto the database
+
+
+	secret-beyond-4953.herokuapp.com
+
+
+
+collection.find().sort({socre:-1}).limit(100).toArray(function(err, cursor) {
+	if (!err) {
+	indexPage+= "<!DOCTYPE HTML><html><head><title>2048 Game Center</title></head></body><h1>2048 Game Center</h1><table><tr><th>User</th><th>Score</th><th>Timestamp</th></tr>";
+	for (var count = 0; cout < cursor.length; count++) {
+		indexPage += "<tr><td>" + cursor[count].username+ "</td><td> + cursor[count].score + "</td><td>" + cursor[count].created_at + "</td></tr>";
+		}
+		indexPage += "</table></body></html>"
+		res.send(indexPage);
+	}
+	}
+})
+
+
+NEVER trust anything that comes from the client
+
+In firefox, view --> toolbar --> tamper data
+
+-Data doesn't go directly to the server. It goes to the proxy
+-You can change values to whatever you want now!
+-New data is now sent to web server 
+-Any data from the client can be modified
+-In Chrome this is different, use burp suite -- download
+
+-CHECK inputs do not take inputs as it is
+-
+
+
+
+-Hack pages using curl to send post request
