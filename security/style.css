@@ -1,0 +1,37 @@
+@font-face
+{
+font-family: ImpactLabel;
+src: url(Impact_Label.ttf);
+}
+
+@font-face
+{
+font-family: Lane;
+src: url(LANENAR_.ttf);
+}
+
+
+@font-face
+{
+font-family: Forte;
+src: url(Forte-Line.ttf);
+}
+
+
+#title {
+	font-size: 40px;
+}
+
+h1 {
+	font-family: Forte;
+	font-size: 30px;
+}
+h2 {
+	font-family: Lane;
+	font-size: 25px;
+}
+
+body {
+	font-size: 14px;
+	font-family: Verdana;
+}
