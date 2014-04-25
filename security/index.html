@@ -32,6 +32,7 @@ Conclusion. You can also list future consdierations and recommendations w/ costs
 <body>
 	<div>
 		<h1 id="title">Security Assessment - 2048 Score Center</h1>
+		Assessment conducted by Lucy Qin - 4/24/2014
 	</div>
 	
 	<div>
@@ -41,29 +42,57 @@ Conclusion. You can also list future consdierations and recommendations w/ costs
 
 	<div>
 		<h1>Methodology</h1>
-
-	</div>
+		I began assessing the security of this web application using black box testing. Later I looked at the actual code to find other vulnerabilities.
 
 	<div>
 		<h1>Abstract of Findings</h1>
+		Inputs are not checked when submitted. This web application relies on users properly putting in the correct input in the correct format. This exposes many vulnerabilities because the user can manipulate the inputs and inject malicious code. The information posted can easily be manipulated and since inputs are not checked, this also allows attackers to search the database and potentially crash it. Since the highest vulnerabilities come from improper checks on inputs, the web application can be made more secure by preventing against such malicious inputs. 
 	</div>
 
 	<div>
 		<h1>Issues Found</h1>
-		<h2>URL Manipulation</h2>
-
-		<h2>SQL Injection</h2>
-
 		<h2>Cross Site Scripting</h2>
 		This web application is vulnerable malicious inputs or scripts. The web application currently accepts scripts and HTML tags, this opens up the potential for an attacker to inject malicious code or use javascript to manipulate database contents. Attackers may also be able to access data.
+		-Can steal cookies, although the current program doesn't use cookies.
+		-Can redirect the site elsewhere
+		<br>
+		<img id="screenshot" src="xss.png" alt="screenshot of xss"></img>
 
-		<h2></h2>
+		<h2>Server Crash</h2>
+		There is a high potential that users can crash the database. As shown by the screenshot below, the web application currently accepts files. This allows attackers to send exceptionally large files that can quickly fill up the database and crash the application. Can easily overload with 
+		<br>
+		<img id="screenshot" src="servercrash.png" alt="screenshot of server crash"></img>
+
+
+		<h2>Cross Origin Reserouce Sharing</h2>
+		The current database allows anyone to post to the web application. 
+		<br>
+		<img id="screenshot" src="asterisk.png" alt="screen shot of cross origin resource sharing"></img>
+
+		<h2>HTML Injection</h2>
+		The web application currently accepts HTML tags, which allows attackers to change the format of the page. After injecting close tags, the web application no longer displayed the content properly as shown by the screenshot.
+		<img id="screenshot" src="html2.png" alt="screen shot of sublime text code"></img>
+		<img id="htmlinjection" src="html.png" alt="screenshot of page after html injection"></img>
+		<br>
+
+		<h2>Minor bugs</h2>
+		Aside from the vulnerabilities found, there are also some minor bugs in the code. The date did not properly display during my tests. Additionally, scores accepts inputs that are non-numerical as shown by my image below. The code also improperly sorts scores. Scores are sorted in descending order by the first digit only. Therefore my score of 228 was listed before 1252 because of the 2.
+
+		<br>
+		<img id="bugs" src="s1.png" alt="screenshot of bugs"></img>
+
+
+
+<!--
+		<h2>Data Extraction</h2>
+		The database is not protected against extraction. A user could easily access the database using a query to generate JSON results for all users, except for the one they are querying. 
+		Can add additional entries to the database that are not real. Since MongoDB does not require authentication, users can access the database. -->
+
 	</div>
 
 	<div>
 		<h1>Conclusion</h1>
-		Aside from the vulnerabilities found, there are also some minor bugs in the code. The date did not properly display during my tests. Additionally, scores accepts inputs that are non-numerical as shown by my image below.
-		<img id="screenshot" src="s1.png"></img>
+		
 	</div>
 
 
