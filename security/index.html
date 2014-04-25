@@ -37,12 +37,12 @@ Conclusion. You can also list future consdierations and recommendations w/ costs
 	
 	<div>
 		<h1>Introduction</h1>
-		This report assesses the web security of <a href="http://walton1337.github.io/">Walton Lee's</a> web application, <a href="http://fathomless-reef-4406.herokuapp.com/">2048 Game Center</a>. This web application maintains high scores for the <a href="http://gabrielecirulli.github.io/2048/">2048 game</a> developed by Gabriele Cirulli and provides an API to submit and retrieve scores. This report exposes the security weaknesses in the web application and potential vulnerabilities. It also points out some bugs that prevent the proper functioning of the web application. Overall, the security weaknesses and the bugs render the application ill suited for public use. The security flaws should be considered more carefully and new measures to prevent against them need to be added before the application is formally released for public use.
+		This report assesses the security of <a href="http://walton1337.github.io/">Walton Lee's</a> web application, <a href="http://fathomless-reef-4406.herokuapp.com/">2048 Game Center</a>. This web application maintains high scores for the <a href="http://gabrielecirulli.github.io/2048/">2048 game</a> developed by Gabriele Cirulli and provides an API to submit and retrieve scores. This report exposes the security weaknesses in the web application and potential vulnerabilities. It also points out some bugs that prevent the proper functioning of the web application. Overall, the security weaknesses and the bugs render the application ill suited for public use. The security flaws should be considered more carefully and new measures to prevent against them need to be added before the application is formally released for public use.
 	</div>
 
 	<div>
 		<h1>Methodology</h1>
-		I began assessing the security of this web application using black box testing. I started by trying various types of attacks without looking at the code. After some successes and some failures, I viewed the javascript file for the web application and was able to pinpoint an additional vulnerabily and have an understanding as to why previous attacks failed. When conducting tests, I the tools I used include curl and the Firefox add-on, Tamper Data.
+		I began assessing the security of this web application using black box testing. I started by trying various types of attacks without looking at the code. After some successes and some failures, I viewed the javascript file for the web application and was able to pinpoint an additional vulnerabily and have an understanding as to why previous attacks failed. The only tool I used in testing was curl. 
 
 	<div>
 		<h1>Abstract of Findings</h1>
@@ -67,7 +67,8 @@ Conclusion. You can also list future consdierations and recommendations w/ costs
 			<li>Risk: high</li>
 			<li>There is a high potential that users can crash the database. This is extremely dangerous since it can disable the functionings of the web application.</li>
 			<li>As shown by the screenshot below, the web application currently accepts files. This allows attackers to send exceptionally large files that can quickly fill up the database and crash the application.</li>
-			<li>This can be prevented by creating an array containing various types of extensions such as ".jpg," ".png," ".mov", and etc. If any of these extensions are found in any of the fields, the post request can be rejected. A simpler way of doing this could be to throw any request that has "." since this character is not used in the username or the score. Through checking for extensions or periods, the web application can prevent files from being added to the database.</li>
+			<li>The vulnerability was exposed using curl, as shown below</li>
+			<li>This can be prevented by creating an array containing various types of extensions such as ".jpg," ".png," ".mov", ".mp3" and etc. If any of these extensions are found in any of the fields, the post request can be rejected. A simpler way of doing this could be to throw any request that has "." since this character is not used in the username or the score. Through checking for extensions or periods, the web application can prevent files from being added to the database. If, however, the file is converted to text, there can also be a limit set on the number of characters allowed. According to the Guinness Book of World Records, the longest name ever was 585 characters. The limit can then be capped at 585 characters, using javascript, so that anyone could still enter their name but files containing extraneous text will not be able to flood the server.</li>
 		</ul> 
 		<br>
 		<img id="screenshot" src="servercrash.png" alt="screenshot of server crash"></img>
@@ -77,7 +78,7 @@ Conclusion. You can also list future consdierations and recommendations w/ costs
 			<li>Vulnerability found in the submit.json API</li>
 			<li>Risk: medium</li>
 			<li>The web application currently accepts HTML tags, which allows attackers to change the format of the page. Although this can the layout of the content, the content itself is still preserved. Therefore this is categorized as a medium risk.</li>
-			<li> After injecting close tags, the web application no longer displayed the content properly as shown by the screenshot.</li>
+			<li>I found this vulnerability by using close tags as the username. The web application afterwards no longer displayed the content properly, as shown by the screenshot.</li>
 			<li>This can be resolved by sanitizing inputs in a method similar to the one mentioned above for resolving the problems presented by cross site scripting.</li>
 		</ul>
 		<img id="htmlinjection2" src="html2.png" alt="screen shot of sublime text code"></img>
@@ -100,7 +101,7 @@ Conclusion. You can also list future consdierations and recommendations w/ costs
 
 	<div>
 		<h1>Conclusion</h1>
-		The issues found in this web application prevent the site from functioning properly. By following the recommendations made by this report, some of the major security risks currently present can be greatly reduced. This, however, does not fully defend the web application from all attacks. A more comprehensive evaluation can be conducted but at additional costs.
+		The issues found in this web application prevent the site from functioning properly. By following the recommendations made by this report, some of the major security risks currently present can be eliminated. This, however, does not 100% defend the web application from all attacks since there may be new innovative methods that attackers can use to break the web application. To further protect the web application, it is necessary to keep up to date on the various methods that attackers are using and modify the web application to limit vulnerabilities.
 	</div>
 
 
