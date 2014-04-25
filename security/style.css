@@ -32,10 +32,14 @@ body {
 	font-family: Calibri;
 	margin-top:50px;
 	margin-bottom:100px;
-	margin-right:50px;
-	margin-left:50px;
+	margin-right:60px;
+	margin-left:60px;
 	background-image: url("retina_wood.png");
 	
+}
+
+ul {
+	padding-left: 20px;
 }
 
 #htmlinjection {
@@ -43,7 +47,23 @@ body {
 	height: auto;
 }
 
+#htmlinjection2 {
+	width: 92%;
+	height: auto;
+
+}
+
 #bugs{
 	width: 40%;
 	height: auto;
+}
+
+#xss {
+	width: 60%;
+	height: auto;
+}
+
+#heading {
+	font-family: ImpactLabel;
+	font-size: 25px;
 }
